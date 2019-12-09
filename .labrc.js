@@ -4,6 +4,7 @@ const config = {
   paths: testFiles,
   coverage: true,
   threshold: 85,
+  'coverage-exclude': testFiles,
   globals: '__core-js_shared__'
 }
 
