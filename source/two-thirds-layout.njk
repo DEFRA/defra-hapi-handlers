@@ -21,9 +21,9 @@
       {% endif %}
 
       {% block formDefinition %}
-        <form method="post" {{ novalidateVal }}>
+      <form method="post" {{ novalidateVal }}>
         <input id="defra-csrf-token" type="hidden" name="DefraCsrfToken" value="{{ DefraCsrfToken }}">
-      {% endblock %}
+        {% endblock %}
 
         {% block formContent %}{% endblock %}
 
@@ -34,7 +34,12 @@
           }) }}
         {% endblock %}
 
-        {% block formFooter %}{% endblock %}
+        {% block formFooter %}
+          {% block formFooterDescription %}
+          {% endblock %}
+          {% block formFooterLink %}
+          {% endblock %}
+        {% endblock %}
 
       </form>
 
