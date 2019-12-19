@@ -1,5 +1,7 @@
 const Joi = require('@hapi/joi')
 
+// Base Handlers
+
 module.exports = class Handlers {
   static set server (server) {
     Handlers._server = server
