@@ -33,13 +33,22 @@ class Handlers extends require('./handlers') {
     }
   }
 
+  async getBreadcrumbs () {
+    return [{
+      text: 'Home',
+      href: '/'
+    }, {
+      text: 'Current'
+    }]
+  }
+
   get payload () {
     return { data: 'stuff' }
   }
 }
 
 lab.experiment('handlers.js:', () => {
-  lab.beforeEach(({ context }) => {
+  lab.beforeEach(async ({ context }) => {
     // Create a sinon sandbox to stub methods
     context.sandbox = sinon.createSandbox()
 
@@ -74,9 +83,11 @@ lab.experiment('handlers.js:', () => {
       return nextPath
     }
 
+    const breadcrumbs = await handlers.getBreadcrumbs()
+
     const h = { view, redirect }
 
-    Object.assign(context, { handlers, app, settings, route, request, h, view })
+    Object.assign(context, { handlers, app, settings, route, request, h, view, breadcrumbs })
   })
 
   lab.afterEach(async ({ context }) => {
@@ -86,7 +97,7 @@ lab.experiment('handlers.js:', () => {
   })
 
   lab.test('handleGet builds view data as expected', async ({ context }) => {
-    const { request, handlers, h, app } = context
+    const { request, handlers, h, app, breadcrumbs } = context
 
     const { pageHeading, isQuestionPage } = app
     const { viewData, fieldname } = handlers
@@ -99,7 +110,7 @@ lab.experiment('handlers.js:', () => {
     const result = await handlers.handleGet(request, h)
 
     Code.expect(result).to.equal({
-      'view-name': { pageHeading, isQuestionPage, fieldname, googleAnalyticsId, viewData, errors, errorList }
+      'view-name': { pageHeading, isQuestionPage, fieldname, googleAnalyticsId, viewData, errors, errorList, breadcrumbs }
     })
   })
 
@@ -123,7 +134,7 @@ lab.experiment('handlers.js:', () => {
   })
 
   lab.test('handleGet builds view data as expected when there are errors', async ({ context }) => {
-    const { request, handlers, h, app } = context
+    const { request, handlers, h, app, breadcrumbs } = context
 
     const { pageHeading, isQuestionPage } = app
     const { viewData, fieldname } = handlers
@@ -137,7 +148,7 @@ lab.experiment('handlers.js:', () => {
     const result = await handlers.handleGet(request, h, errors)
 
     Code.expect(result).to.equal({
-      'view-name': { pageHeading, isQuestionPage, fieldname, googleAnalyticsId, viewData, errors, errorList }
+      'view-name': { pageHeading, isQuestionPage, fieldname, googleAnalyticsId, viewData, errors, errorList, breadcrumbs }
     })
 
     // payload should be merged when in error

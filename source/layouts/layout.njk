@@ -49,6 +49,12 @@
     },
     html: 'This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.'
   }) }}
+  {% if breadcrumbs.length %}
+    {% from "breadcrumbs/macro.njk" import govukBreadcrumbs %}
+    {{ govukBreadcrumbs({
+      items: breadcrumbs
+    }) }}
+  {% endif %}
 {% endblock %}
 
 {% block pageTitle %}

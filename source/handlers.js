@@ -59,6 +59,7 @@ module.exports = class Handlers {
   async handleGet (request, h, errors) {
     // The default handleGet
 
+    const breadcrumbs = (this.getBreadcrumbs && await this.getBreadcrumbs()) || []
     const pageHeading = await this.getPageHeading(request)
     const viewName = await this.getViewName(request)
     const viewData = await this.getViewData(request)
@@ -72,6 +73,7 @@ module.exports = class Handlers {
 
     return h.view(viewName, {
       googleAnalyticsId,
+      breadcrumbs,
       pageHeading,
       isQuestionPage,
       fieldname,
