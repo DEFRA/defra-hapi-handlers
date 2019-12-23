@@ -59,7 +59,7 @@ module.exports = class Handlers {
   async handleGet (request, h, errors) {
     // The default handleGet
 
-    const breadcrumbs = (this.getBreadcrumbs && await this.getBreadcrumbs()) || []
+    const breadcrumbs = (this.getBreadcrumbs && await this.getBreadcrumbs(request)) || []
     const pageHeading = await this.getPageHeading(request)
     const viewName = await this.getViewName(request)
     const viewData = await this.getViewData(request)
