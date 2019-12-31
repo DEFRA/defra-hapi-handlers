@@ -27,29 +27,67 @@ Please note:
 // First extend the Handlers class
 
 class Handlers extends require('defra-hapi-handlers') {
+  // Mandatory if a post route is required
   get schema () {
-    return Joi.object({ config: 'schema config' })
+    return Joi.object({
+      'item-description': Joi.string().trim().max(this.maxFreeTextLength).required()
+    })
   }
 
+  // Mandatory if a post route is required
   get errorMessages () {
     return {
-      'field-name': {
-        'error.type': 'error message'
+      'item-description': {
+        'string.empty': 'Enter the item\'s description',
+        'string.max': `The description must be ${this.maxFreeTextLength} characters or fewer`
       }
     }
   }
 
+  // Optional and overrides parent class getBreadcrumbs
   async getBreadcrumbs () {
     return [{
       text: 'Home',
       href: '/'
     }, {
-      text: 'Current'
+      text: 'Item Description'
     }]
   }
 
+  // Optional and overrides parent class payload getter
   get payload () {
     return { data: 'stuff' }
+  }
+
+
+  async getPageHeading (request) {
+    return 'Item Description'
+  }
+
+  async getNextPath (request) {
+    return '/next-page'
+  }
+
+  async getViewName (request) {
+    return 'my-page'
+  }
+
+  // Overrides parent class handleGet 
+  async handleGet (request, h, errors) {
+    const { description = '' } = // Some fictional item data
+    this.viewData = {
+      // Add your data to the viewData object
+      'item-description': description.trim()
+    }
+    return super.handleGet(request, h, errors)
+  }
+
+  // Overrides parent class handlePost
+  async handlePost (request, h) {
+    const item = // Some fictional item data
+    item.description = request.payload['item-description']
+    // save your item data here
+    return super.handlePost(request, h)
   }
 }
 
@@ -62,10 +100,7 @@ const handlers = new Handlers()
 
 // routes will include a 2 element array where the first is the hapi route configuration for a get method and the second is for a post method
 const [ getRoute, postRoute ] = handlers.routes({
-  path: '/my-page',
-  app: {
-    view: 'my-page'
-  }
+  path: '/my-page'
 })
 
 // Register each routes
