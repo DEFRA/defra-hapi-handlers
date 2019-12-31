@@ -68,7 +68,7 @@ const [ getRoute, postRoute ] = handlers.routes({
   }
 })
 
-// Register the routes
+// Register each routes
 server.route(getRoute)
 server.route(postRoute)
 
