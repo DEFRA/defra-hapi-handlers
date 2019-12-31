@@ -59,7 +59,6 @@ class Handlers extends require('defra-hapi-handlers') {
     return { data: 'stuff' }
   }
 
-
   async getPageHeading (request) {
     return 'Item Description'
   }
