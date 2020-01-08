@@ -97,8 +97,11 @@ module.exports = class Handlers {
 
   async formatErrors (request, errors) {
     // Format the error messages for the view
-    const [...errorMessages] = await Promise.all(errors.details.map(async ({ path, type, message }) => {
+    const [...errorMessages] = await Promise.all(errors.details.map(async ({ path, type, message, context }) => {
       const field = path[0]
+      if (!field) {
+        return this.formatErrors(request, context)
+      }
       const error = {
         field,
         text: typeof this.errorMessages === 'function' ? (await this.errorMessages(request))[field][type] : this.errorMessages[field][type],
@@ -111,14 +114,24 @@ module.exports = class Handlers {
       return error
     }))
 
-    return Object.values(errorMessages).reduce((prev, { field, text, href }) => {
+    const formattedErrors = Object.values(errorMessages).reduce((prev, { field, text, href }) => {
       prev[field] = { text, href }
       return prev
     }, {})
+
+    return formattedErrors.undefined ? errorMessages : formattedErrors
   }
 
   async failAction (request, h, errors) {
-    const result = await this.handleGet(request, h, await this.formatErrors(request, errors))
+    const formattedErrors = await this.formatErrors(request, errors)
+    if (Array.isArray(formattedErrors)) {
+      errors = {}
+      formattedErrors.forEach((error) => {
+        // Add each error
+        Object.assign(errors, error)
+      })
+    }
+    const result = await this.handleGet(request, h, errors)
 
     return result
       .code(400)
