@@ -1,4 +1,6 @@
+require('array-flat-polyfill')
 const Joi = require('@hapi/joi')
+const { logger } = require('defra-logging-facade')
 
 // Base Handlers
 
@@ -95,43 +97,45 @@ module.exports = class Handlers {
     return `#${field}` // Can be overridden where required
   }
 
-  async formatErrors (request, errors) {
-    // Format the error messages for the view
-    const [...errorMessages] = await Promise.all(errors.details.map(async ({ path, type, message, context }) => {
-      const field = path[0]
-      if (!field) {
-        return this.formatErrors(request, context)
-      }
-      const error = {
-        field,
-        text: typeof this.errorMessages === 'function' ? (await this.errorMessages(request))[field][type] : this.errorMessages[field][type],
-        href: this.errorLink(field, type)
-      }
-      if (!error.text) {
-        // use default message if not specified
-        error.text = message
-      }
-      return error
-    }))
+  async buildErrors (request, details) {
+    const errorsByField = {}
+    const errors = await Promise.all(details
+      .map(async ({ message, path, type, context = {} }) => {
+        if (context.details) {
+          return this.buildErrors(request, context.details)
+        } else {
+          const field = path[0]
+          const text = typeof this.errorMessages === 'function' ? (await this.errorMessages(request))[field][type] : this.errorMessages[field][type]
+          const href = this.errorLink(field, type)
+          const { label } = context
+          if (!text) {
+            logger.warn('Default message used: ', { field, type, message })
+          }
+          return { label, text: text || message, href, field, type }
+        }
+      }))
 
-    const formattedErrors = Object.values(errorMessages).reduce((prev, { field, text, href }) => {
+    // Now make sure there is only one error per field
+    errors.flat()
+      .filter(({ field, label }) => field === label)
+      .forEach((error) => {
+        errorsByField[error.field] = error
+      })
+    return Object.values(errorsByField)
+  }
+
+  async formatErrors (request, errors) {
+    const errorMessages = await this.buildErrors(request, errors.details)
+
+    return Object.values(errorMessages).reduce((prev, { field, text, href }) => {
       prev[field] = { text, href }
       return prev
     }, {})
-
-    return formattedErrors.undefined ? errorMessages : formattedErrors
   }
 
   async failAction (request, h, errors) {
     const formattedErrors = await this.formatErrors(request, errors)
-    if (Array.isArray(formattedErrors)) {
-      errors = {}
-      formattedErrors.forEach((error) => {
-        // Add each error
-        Object.assign(errors, error)
-      })
-    }
-    const result = await this.handleGet(request, h, errors)
+    const result = await this.handleGet(request, h, formattedErrors)
 
     return result
       .code(400)

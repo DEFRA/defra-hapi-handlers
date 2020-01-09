@@ -1,6 +1,6 @@
 {
   "name": "defra-hapi-handlers",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Base class to define the GET and POST handlers for a given route",
   "author": "Department for Environment, Food & Rural Affairs",
   "license": "SEE LICENSE IN LICENSE",
@@ -29,7 +29,9 @@
   },
   "homepage": "https://github.com/ajaxscape/defra-hapi-handlers#readme",
   "dependencies": {
-    "@hapi/joi": "^16.1.8"
+    "@hapi/joi": "^16.1.8",
+    "array-flat-polyfill": "^1.0.1",
+    "defra-logging-facade": "git+https://github.com/DEFRA/defra-logging-facade.git#master"
   },
   "devDependencies": {
     "@hapi/code": "^7.0.0",
