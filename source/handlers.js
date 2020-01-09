@@ -116,11 +116,11 @@ module.exports = class Handlers {
       }))
 
     // Now make sure there is only one error per field
-    errors.flat()
-      .filter(({ field, label }) => field === label)
-      .forEach((error) => {
-        errorsByField[error.field] = error
-      })
+    errors.flat().forEach((error) => {
+      errorsByField[error.field] = error
+    })
+
+    // Return an array of the values
     return Object.values(errorsByField)
   }
 

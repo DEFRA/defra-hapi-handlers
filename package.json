@@ -1,6 +1,6 @@
 {
   "name": "defra-hapi-handlers",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Base class to define the GET and POST handlers for a given route",
   "author": "Department for Environment, Food & Rural Affairs",
   "license": "SEE LICENSE IN LICENSE",
