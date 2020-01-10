@@ -99,13 +99,14 @@ module.exports = class Handlers {
 
   async buildErrors (request, details) {
     const errorsByField = {}
+    const errorMessages = typeof this.errorMessages === 'function' ? (await this.errorMessages(request)) : this.errorMessages
     const errors = await Promise.all(details
       .map(async ({ message, path, type, context = {} }) => {
         if (context.details) {
           return this.buildErrors(request, context.details)
         } else {
           const field = path[0]
-          const text = typeof this.errorMessages === 'function' ? (await this.errorMessages(request))[field][type] : this.errorMessages[field][type]
+          const text = errorMessages[field][type]
           const href = this.errorLink(field, type)
           const { label } = context
           if (!text) {
@@ -113,11 +114,26 @@ module.exports = class Handlers {
           }
           return { label, text: text || message, href, field, type }
         }
-      }))
+      }
+      ))
 
-    // Now make sure there is only one error per field
+    // Calculates prioritized position in error list (error not found is set to max so it's picked last)
+    const getPosition = (types, type) => {
+      return types.includes(type) ? types.indexOf(type) : Number.MAX_SAFE_INTEGER
+    }
+
+    // Now make sure there is only the prioritized error is displayed for that field
     errors.flat().forEach((error) => {
-      errorsByField[error.field] = error
+      if (errorsByField[error.field]) {
+        const types = Object.keys(errorMessages[error.field])
+        const currentIndex = getPosition(types, errorsByField[error.field].type)
+        const newIndex = getPosition(types, error.type)
+        if (newIndex < currentIndex) {
+          errorsByField[error.field] = error
+        }
+      } else {
+        errorsByField[error.field] = error
+      }
     })
 
     // Return an array of the values
