@@ -102,6 +102,8 @@ lab.experiment('handlers.js:', () => {
     const { pageHeading, isQuestionPage } = app
     const { viewData, fieldname } = handlers
     const { googleAnalyticsId } = request.server.app
+    const includeBacklink = true
+
     const errors = undefined
     const errorList = undefined
 
@@ -110,7 +112,7 @@ lab.experiment('handlers.js:', () => {
     const result = await handlers.handleGet(request, h)
 
     Code.expect(result).to.equal({
-      'view-name': { pageHeading, isQuestionPage, fieldname, googleAnalyticsId, viewData, errors, errorList, breadcrumbs }
+      'view-name': { pageHeading, isQuestionPage, fieldname, includeBacklink, googleAnalyticsId, viewData, errors, errorList, breadcrumbs }
     })
   })
 
@@ -139,6 +141,7 @@ lab.experiment('handlers.js:', () => {
     const { pageHeading, isQuestionPage } = app
     const { viewData, fieldname } = handlers
     const { googleAnalyticsId } = request.server.app
+    const includeBacklink = true
 
     const errors = { 'field-name': { text: 'error message', href: '#field-name' } }
     const errorList = Object.values(errors)
@@ -148,7 +151,7 @@ lab.experiment('handlers.js:', () => {
     const result = await handlers.handleGet(request, h, errors)
 
     Code.expect(result).to.equal({
-      'view-name': { pageHeading, isQuestionPage, fieldname, googleAnalyticsId, viewData, errors, errorList, breadcrumbs }
+      'view-name': { pageHeading, isQuestionPage, includeBacklink, fieldname, googleAnalyticsId, viewData, errors, errorList, breadcrumbs }
     })
 
     // payload should be merged when in error

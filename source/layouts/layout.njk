@@ -30,6 +30,11 @@
   </script>
   {% endif %}
 
+  <!-- Hide the back link with css if no-script -->
+  <noscript>
+    <style>#defra-back-link {display: none} </style>
+  </noscript>
+
 {% endblock %}
 
 {% block header %}
@@ -54,6 +59,16 @@
     {{ govukBreadcrumbs({
       items: breadcrumbs
     }) }}
+  {% elseif includeBacklink %}
+    {% from "back-link/macro.njk" import govukBackLink %}
+    {{ govukBackLink({
+      text: "Back",
+      href: "#",
+      attributes: {
+        id: "defra-back-link",
+        onclick: "window.history.go(-1); return false;"
+      }
+    }) }}
   {% endif %}
 {% endblock %}
 
@@ -61,10 +76,6 @@
   {% if errors %}Error: {% endif %}{{ pageHeading }} - {{ pageTitle }}
 {% endblock %}
 
-{{ govukBackLink({
-  text: "Back",
-  href: "#"
-}) }}
 {% block content %}
   <h1 class="govuk-heading-xl">Default page template</h1>
   {% block errorSummary %}

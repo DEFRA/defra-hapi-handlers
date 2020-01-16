@@ -1,6 +1,6 @@
 {
   "name": "defra-hapi-handlers",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Base class to define the GET and POST handlers for a given route",
   "author": "Department for Environment, Food & Rural Affairs",
   "license": "SEE LICENSE IN LICENSE",
@@ -38,7 +38,7 @@
     "@hapi/lab": "^21.0.0",
     "codeclimate-test-reporter": "0.5.1",
     "eslint": "^6.8.0",
-    "sinon": "^8.0.4",
+    "sinon": "^8.1.0",
     "standard": "^14.3.1"
   }
 }

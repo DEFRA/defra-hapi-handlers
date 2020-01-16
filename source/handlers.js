@@ -45,6 +45,11 @@ module.exports = class Handlers {
     return request.route.settings.app.isQuestionPage || false
   }
 
+  async getBackLinkEnabled (request) {
+    const { tags = [] } = request.route.settings
+    return !tags.includes('hide-back-link')
+  }
+
   async getGoogleAnalyticsId (request) {
     return request.server.app.googleAnalyticsId
   }
@@ -67,6 +72,7 @@ module.exports = class Handlers {
     const viewData = await this.getViewData(request)
     const isQuestionPage = await this.getIsQuestionPage(request)
     const googleAnalyticsId = await this.getGoogleAnalyticsId(request)
+    const includeBacklink = await this.getBackLinkEnabled(request)
     const { fieldname } = this
     if (errors) {
       Object.assign(viewData, request.payload)
@@ -77,6 +83,7 @@ module.exports = class Handlers {
       googleAnalyticsId,
       breadcrumbs,
       pageHeading,
+      includeBacklink,
       isQuestionPage,
       fieldname,
       viewData,
