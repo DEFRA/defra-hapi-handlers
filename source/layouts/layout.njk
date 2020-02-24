@@ -47,6 +47,13 @@
 {% endblock %}
 
 {% block beforeContent %}
+  {% if loginEnabled %}
+    {% if account %}
+      <p class="govuk-body govuk-login-enabled"><a class="govuk-account">{{ account }}</a><a class="govuk-login-status">sign out</a></p>
+    {% else %}
+      <p class="govuk-body govuk-login-enabled"><a class="govuk-login-status">sign in</a></p>
+    {% endif %}
+  {% endif %}
   {% from "phase-banner/macro.njk" import govukPhaseBanner %}
   {{ govukPhaseBanner({
     tag: {
