@@ -101,7 +101,8 @@ module.exports = class Handlers {
       fieldname,
       viewData,
       errors,
-      errorList
+      errorList,
+      containerClasses: 'govuk-login-enabled-container'
     })
   }
 

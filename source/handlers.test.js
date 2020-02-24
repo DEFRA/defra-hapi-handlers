@@ -5,6 +5,8 @@ const lab = exports.lab = Lab.script()
 const sinon = require('sinon')
 const joi = require('@hapi/joi')
 
+const containerClasses = 'govuk-login-enabled-container'
+
 function createError (request = {}, field, type) {
   // Generate an example error structure
   const schema = joi.object({ [field]: joi.string() })
@@ -118,7 +120,7 @@ lab.experiment('handlers.js:', () => {
     const result = await handlers.handleGet(request, h)
 
     Code.expect(result).to.equal({
-      'view-name': { pageHeading, isQuestionPage, fieldname, account, includeBacklink, googleAnalyticsId, viewData, errors, errorList, breadcrumbs, phase, loginEnabled }
+      'view-name': { pageHeading, isQuestionPage, fieldname, account, includeBacklink, googleAnalyticsId, viewData, errors, errorList, breadcrumbs, phase, loginEnabled, containerClasses }
     })
   })
 
@@ -157,7 +159,7 @@ lab.experiment('handlers.js:', () => {
     const result = await handlers.handleGet(request, h, errors)
 
     Code.expect(result).to.equal({
-      'view-name': { pageHeading, isQuestionPage, includeBacklink, fieldname, account, googleAnalyticsId, viewData, errors, errorList, breadcrumbs, phase, loginEnabled }
+      'view-name': { pageHeading, isQuestionPage, includeBacklink, fieldname, account, googleAnalyticsId, viewData, errors, errorList, breadcrumbs, phase, loginEnabled, containerClasses }
     })
 
     // payload should be merged when in error
