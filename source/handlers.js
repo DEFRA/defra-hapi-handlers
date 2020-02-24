@@ -50,6 +50,14 @@ module.exports = class Handlers {
     return !tags.includes('hide-back-link')
   }
 
+  async getPhase (request) {
+    return request.server.app.phase
+  }
+
+  async loginEnabled (request) {
+    return request.server.app.loginEnabled
+  }
+
   async getGoogleAnalyticsId (request) {
     return request.server.app.googleAnalyticsId
   }
@@ -73,13 +81,18 @@ module.exports = class Handlers {
     const isQuestionPage = await this.getIsQuestionPage(request)
     const googleAnalyticsId = await this.getGoogleAnalyticsId(request)
     const includeBacklink = await this.getBackLinkEnabled(request)
-    const { fieldname } = this
+    const phase = await this.getPhase(request)
+    const loginEnabled = await this.loginEnabled(request)
+    const { fieldname, account } = this
     if (errors) {
       Object.assign(viewData, request.payload)
     }
     const errorList = errors && Object.values(errors)
 
     return h.view(viewName, {
+      phase,
+      loginEnabled,
+      account,
       googleAnalyticsId,
       breadcrumbs,
       pageHeading,

@@ -56,6 +56,7 @@ lab.experiment('handlers.js:', () => {
 
     handlers.viewData = { example: 'view-data' }
     handlers.fieldname = 'field-name'
+    handlers.account = { username: 'john.doe@defra.test.gov.uk' }
 
     const app = {
       view: 'view-name',
@@ -67,10 +68,15 @@ lab.experiment('handlers.js:', () => {
     }
 
     const googleAnalyticsId = 'UA-68732487234'
+    const phase = 'beta'
+    const loginEnabled = {
+      signInLink: '#',
+      signOutLink: '#'
+    }
 
     const settings = { app }
     const route = { settings }
-    const server = { app: { googleAnalyticsId } }
+    const server = { app: { googleAnalyticsId, phase, loginEnabled } }
     const request = { route, server }
 
     const view = (name, data) => {
@@ -100,8 +106,8 @@ lab.experiment('handlers.js:', () => {
     const { request, handlers, h, app, breadcrumbs } = context
 
     const { pageHeading, isQuestionPage } = app
-    const { viewData, fieldname } = handlers
-    const { googleAnalyticsId } = request.server.app
+    const { viewData, fieldname, account } = handlers
+    const { googleAnalyticsId, loginEnabled, phase } = request.server.app
     const includeBacklink = true
 
     const errors = undefined
@@ -112,7 +118,7 @@ lab.experiment('handlers.js:', () => {
     const result = await handlers.handleGet(request, h)
 
     Code.expect(result).to.equal({
-      'view-name': { pageHeading, isQuestionPage, fieldname, includeBacklink, googleAnalyticsId, viewData, errors, errorList, breadcrumbs }
+      'view-name': { pageHeading, isQuestionPage, fieldname, account, includeBacklink, googleAnalyticsId, viewData, errors, errorList, breadcrumbs, phase, loginEnabled }
     })
   })
 
@@ -139,8 +145,8 @@ lab.experiment('handlers.js:', () => {
     const { request, handlers, h, app, breadcrumbs } = context
 
     const { pageHeading, isQuestionPage } = app
-    const { viewData, fieldname } = handlers
-    const { googleAnalyticsId } = request.server.app
+    const { viewData, fieldname, account } = handlers
+    const { googleAnalyticsId, phase, loginEnabled } = request.server.app
     const includeBacklink = true
 
     const errors = { 'field-name': { text: 'error message', href: '#field-name' } }
@@ -151,7 +157,7 @@ lab.experiment('handlers.js:', () => {
     const result = await handlers.handleGet(request, h, errors)
 
     Code.expect(result).to.equal({
-      'view-name': { pageHeading, isQuestionPage, includeBacklink, fieldname, googleAnalyticsId, viewData, errors, errorList, breadcrumbs }
+      'view-name': { pageHeading, isQuestionPage, includeBacklink, fieldname, account, googleAnalyticsId, viewData, errors, errorList, breadcrumbs, phase, loginEnabled }
     })
 
     // payload should be merged when in error
