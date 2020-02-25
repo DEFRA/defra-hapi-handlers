@@ -49,9 +49,9 @@
 {% block beforeContent %}
   {% if loginEnabled %}
     {% if account %}
-      <p class="govuk-body govuk-login-enabled"><a class="govuk-account" href="{{ account.profileLink }}">{{ account.username }}</a><a href="loginEnabled.signOutLink" class="govuk-login-status">sign out</a></p>
+      <p class="govuk-body govuk-login-enabled"><a class="govuk-account" href="{{ account.profileLink }}">{{ account.username }}</a><a href="{{ loginEnabled.signOutLink }}" class="govuk-login-status">sign out</a></p>
     {% else %}
-      <p class="govuk-body govuk-login-enabled"><a href="loginEnabled.signInLink" class="govuk-login-status">sign in</a></p>
+      <p class="govuk-body govuk-login-enabled"><a href="{{ loginEnabled.signInLink }}" class="govuk-login-status">sign in</a></p>
     {% endif %}
   {% endif %}
   {% if phase %}
